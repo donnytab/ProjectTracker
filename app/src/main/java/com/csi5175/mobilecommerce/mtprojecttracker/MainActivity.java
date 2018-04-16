@@ -1,9 +1,15 @@
 package com.csi5175.mobilecommerce.mtprojecttracker;
 
+import android.app.TabActivity;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityHandler;
@@ -14,11 +20,23 @@ import com.amazonaws.mobile.client.AWSStartupResult;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.s3.transferutility.*;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.util.LengthCheckInputStream;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends TabActivity implements TabHost.OnTabChangeListener {
+    private TabHost tabHost;
+    private int currentTab;
+    private ListView listView1;
+
+    private static final String TODO_SPEC = "todoSpec";
+    private static final String COMPLETED_SPEC = "completedSpec";
+    private static final String ALL_SPEC = "allSpec";
+    private static final String LIST1_TAG = "TO DO";
+
     private AWSCredentialsProvider awsCredentialsProvider;
     private AWSConfiguration awsConfiguration;
 
@@ -26,6 +44,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        listView1 = (ListView)findViewById(R.id.list1);
+        tabHost = getTabHost();
+        tabHost.setOnTabChangedListener(this);
+
+
+        TabSpec tabSpec1 = tabHost.newTabSpec(TODO_SPEC);
+
+        tabSpec1.setIndicator(LIST1_TAG);
+        tabSpec1.setContent(new TabHost.TabContentFactory() {
+            @Override
+            public View createTabContent(String s) {
+                return listView1;
+            }
+        });
+
+        List<String> list = new ArrayList<String>();
+        list.add("MT 1");
+        list.add("MT 2");
+        list.add("MT 3");
+
+        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list));
+
+        tabHost.addTab(tabSpec1);
 
         AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
             @Override
@@ -115,5 +157,14 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("YourActivity", "Bytes Transferrred: " + uploadObserver.getBytesTransferred());
         Log.d("YourActivity", "Bytes Total: " + uploadObserver.getBytesTotal());
+    }
+
+    @Override
+    public void onTabChanged(String tabName) {
+        if(tabName.equals("")) {
+
+        } else {
+
+        }
     }
 }
