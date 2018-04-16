@@ -4,7 +4,7 @@
   "CredentialsProvider": {
     "CognitoIdentity": {
       "Default": {
-        "PoolId": "us-east-1:1bdb08f5-2b83-4c61-8d1f-af8521e6d614",
+        "PoolId": "us-east-1:deeea782-48bc-40b9-b5b3-0b5381b0a00b",
         "Region": "us-east-1"
       }
     }
@@ -20,6 +20,13 @@
   },
   "PinpointTargeting": {
     "Default": {
+      "Region": "us-east-1"
+    }
+  },
+
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "mtprojecttracker-deployments-mobilehub-1520248144",
       "Region": "us-east-1"
     }
   }
