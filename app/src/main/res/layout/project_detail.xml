@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/editText6"
         android:ems="10"
         android:hint="Due Date" />
 
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/new_due"
         android:ems="10"
         android:hint="Course Number" />
 
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/new_course_num"
         android:ems="10"
         android:hint="Instructor Name" />
 
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/new_instructor_name"
         android:ems="10"
         android:hint="Project Name" />
 
@@ -62,6 +62,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="25dp"
+        android:layout_below="@+id/new_project_name"
         android:ems="10"
         android:inputType="textMultiLine"
         android:hint="Project Description"/>

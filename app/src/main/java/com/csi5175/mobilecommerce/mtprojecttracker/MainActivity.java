@@ -2,6 +2,7 @@ package com.csi5175.mobilecommerce.mtprojecttracker;
 
 import android.annotation.SuppressLint;
 import android.app.TabActivity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -104,6 +105,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView1 = (ListView)findViewById(R.id.list1);
         listView2 = (ListView)findViewById(R.id.list2);
         listView3 = (ListView)findViewById(R.id.list3);
+        newBtn = (FloatingActionButton)findViewById(R.id.new_button);
         tabHost = getTabHost();
         tabHost.setOnTabChangedListener(this);
 
@@ -163,14 +165,14 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         uploadWithTransferUtility();
 
-//        newBtn = (ImageButton) findViewById(R.id.imageButton);
-//        newBtn.setOnClickListener(new ImageButton.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(getApplicationContext(),NewProjectActivity.class);
-//                startActivity(i);
-//            }
-//        });
+        // To NewProject activity
+        newBtn.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),NewProjectActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
 

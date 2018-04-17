@@ -135,6 +135,8 @@ public class NewProjectActivity extends AppCompatActivity {
                     String instructorString = instructor_name.getText().toString();
                     String projectNameString = project_name.getText().toString();
                     String contextString = description.getText().toString();
+
+
                     String statusString = "todo";
 
                     //title text ,time text, context text
