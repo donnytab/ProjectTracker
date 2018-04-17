@@ -1,13 +1,18 @@
 package com.csi5175.mobilecommerce.mtprojecttracker;
 
+import android.annotation.SuppressLint;
 import android.app.TabActivity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -40,15 +45,48 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private static final String LIST2_TAG = "COMPLETED";
     private static final String LIST3_TAG = "ALL";
 
+    private static final String DATABASE_NAME = "s3db";
+    private static final String TABLE_NAME = "project";
+    public static final String ID = "_id";
+    public static final String COURSE_TITLE = "title";
+    public static final String COURSE_NUM = "course_num";
+    public static final String INSTRUCTOR_NAME = "instructor_name";
+    public static final String PROJECT_NAME = "project_name";
+    public static final String DESCRIPTION = "description";
+    public static final String DUE_DATE = "due";
+    public static final String STATUS = "status";
+    private SQLiteDatabase sqlDB;
+    private Cursor cursor_all;
+
     private int currentTab;
 
     private AWSCredentialsProvider awsCredentialsProvider;
     private AWSConfiguration awsConfiguration;
 
+    @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Create or open database
+        sqlDB = openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY,null);
+
+        // Create table
+        try {
+            sqlDB.execSQL("CREATE TABLE " + TABLE_NAME + " ("
+                    + ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + COURSE_TITLE + " TEXT NOT NULL,"
+                    + COURSE_NUM + " TEXT NOT NULL,"
+                    + INSTRUCTOR_NAME + " TEXT NOT NULL,"
+                    + PROJECT_NAME + " TEXT NOT NULL,"
+                    + DESCRIPTION + " TEXT NOT NULL,"
+                    + DUE_DATE + " TEXT NOT NULL)");
+        }catch(Exception e){
+        }
+
+        cursor_all = sqlDB.query(TABLE_NAME, null, null, null, null, null, null);
+
 
         currentTab = 0;
 
@@ -58,17 +96,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         tabHost = getTabHost();
         tabHost.setOnTabChangedListener(this);
 
-        /*
-        TabSpec tabSpec1 = tabHost.newTabSpec(TODO_SPEC);
-        TabSpec tabSpec2 = tabHost.newTabSpec(COMPLETED_SPEC);
-        TabSpec tabSpec3 = tabHost.newTabSpec(ALL_SPEC);
-
-
-        tabSpec1.setIndicator(LIST1_TAG);
-        tabSpec2.setIndicator(LIST2_TAG);
-        tabSpec3.setIndicator(LIST3_TAG);
-
-*/
         List<String> list1 = new ArrayList<String>();
         list1.add("MT 1");
         list1.add("MT 2");
@@ -83,45 +110,14 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
         listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
-        listView3.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3));
+//        listView3.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3));
+        listView3.setAdapter(RefreshAdapter(cursor_all));
 
         tabHost.addTab(tabHost.newTabSpec(TODO_SPEC).setIndicator(LIST1_TAG).setContent(R.id.list1));
         tabHost.addTab(tabHost.newTabSpec(COMPLETED_SPEC).setIndicator(LIST2_TAG).setContent(R.id.list2));
         tabHost.addTab(tabHost.newTabSpec(ALL_SPEC).setIndicator(LIST3_TAG).setContent(R.id.list3));
-/*
 
-        tabSpec1.setContent(new TabHost.TabContentFactory() {
-            @Override
-            public View createTabContent(String s) {
-                return listView1;
-            }
-        });
-
-        tabSpec2.setContent(new TabHost.TabContentFactory() {
-            @Override
-            public View createTabContent(String s) {
-                return listView2;
-            }
-        });
-
-        tabSpec3.setContent(new TabHost.TabContentFactory() {
-            @Override
-            public View createTabContent(String s) {
-                return listView3;
-            }
-        });
-*/
-
-/*
-        tabHost.addTab(tabSpec1);
-        tabHost.addTab(tabSpec2);
-        tabHost.addTab(tabSpec3);
-*/
         tabHost.setCurrentTab(currentTab);
-
-
-
-
 
         AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
             @Override
@@ -220,5 +216,15 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         } else {
 
         }
+    }
+
+    private SimpleCursorAdapter RefreshAdapter(Cursor c){
+        SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(this,
+                R.layout.project_list,
+                c,
+                new String[]{PROJECT_NAME, DUE_DATE},
+                new int[]{R.id.project_name, R.id.project_due},
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        return  listAdapter;
     }
 }
