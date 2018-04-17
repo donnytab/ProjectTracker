@@ -5,12 +5,14 @@ import android.app.TabActivity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TabHost;
@@ -37,6 +39,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private ListView listView1;
     private ListView listView2;
     private ListView listView3;
+    private FloatingActionButton newBtn;
 
     private static final String TODO_SPEC = "todoSpec";
     private static final String COMPLETED_SPEC = "completedSpec";
@@ -159,6 +162,15 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
 
         uploadWithTransferUtility();
+
+//        newBtn = (ImageButton) findViewById(R.id.imageButton);
+//        newBtn.setOnClickListener(new ImageButton.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(getApplicationContext(),NewProjectActivity.class);
+//                startActivity(i);
+//            }
+//        });
     }
 
 

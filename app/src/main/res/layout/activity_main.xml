@@ -6,6 +6,25 @@
     android:layout_height="match_parent"
     tools:context="com.csi5175.mobilecommerce.mtprojecttracker.MainActivity">
 
+    <!--<ImageButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:srcCompat="@android:drawable/ic_input_add"-->
+        <!--android:id="@+id/imageButton"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true" />-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:id="@+id/imageButton"
+        android:layout_gravity="bottom|end"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
     <TabHost
         android:id="@android:id/tabhost"
         android:layout_width="match_parent"
