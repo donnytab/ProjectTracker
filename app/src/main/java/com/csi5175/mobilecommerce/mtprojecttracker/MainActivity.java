@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
@@ -127,6 +128,56 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView1.setAdapter(RefreshAdapter(cursor_todo));
         listView2.setAdapter(RefreshAdapter(cursor_completed));
         listView3.setAdapter(RefreshAdapter(cursor_all));
+
+
+        //enter note_add page
+        listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getApplicationContext(), NewProjectActivity.class);
+                i.putExtra(ID, cursor_todo.getString(0));
+                i.putExtra(COURSE_TITLE, cursor_todo.getString(1));
+                i.putExtra(COURSE_NUM, cursor_todo.getString(2));
+                i.putExtra(INSTRUCTOR_NAME, cursor_todo.getString(3));
+                i.putExtra(PROJECT_NAME, cursor_todo.getString(4));
+                i.putExtra(DESCRIPTION, cursor_todo.getString(5));
+                i.putExtra(DUE_DATE, cursor_todo.getString(6));
+                i.putExtra(STATUS, cursor_todo.getString(6));
+                startActivity(i);
+            }
+        });
+
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getApplicationContext(), NewProjectActivity.class);
+                i.putExtra(ID, cursor_completed.getString(0));
+                i.putExtra(COURSE_TITLE, cursor_completed.getString(1));
+                i.putExtra(COURSE_NUM, cursor_completed.getString(2));
+                i.putExtra(INSTRUCTOR_NAME, cursor_completed.getString(3));
+                i.putExtra(PROJECT_NAME, cursor_completed.getString(4));
+                i.putExtra(DESCRIPTION, cursor_completed.getString(5));
+                i.putExtra(DUE_DATE, cursor_completed.getString(6));
+                i.putExtra(STATUS, cursor_completed.getString(6));
+                startActivity(i);
+            }
+        });
+
+        listView3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getApplicationContext(), NewProjectActivity.class);
+                i.putExtra(ID, cursor_all.getString(0));
+                i.putExtra(COURSE_TITLE, cursor_all.getString(1));
+                i.putExtra(COURSE_NUM, cursor_all.getString(2));
+                i.putExtra(INSTRUCTOR_NAME, cursor_all.getString(3));
+                i.putExtra(PROJECT_NAME, cursor_all.getString(4));
+                i.putExtra(DESCRIPTION, cursor_all.getString(5));
+                i.putExtra(DUE_DATE, cursor_all.getString(6));
+                i.putExtra(STATUS, cursor_all.getString(6));
+                startActivity(i);
+            }
+        });
 
         tabHost.addTab(tabHost.newTabSpec(TODO_SPEC).setIndicator(LIST1_TAG).setContent(R.id.list1));
         tabHost.addTab(tabHost.newTabSpec(COMPLETED_SPEC).setIndicator(LIST2_TAG).setContent(R.id.list2));

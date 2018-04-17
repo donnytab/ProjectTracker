@@ -95,11 +95,23 @@ public class NewProjectActivity extends AppCompatActivity {
         // Show note details
         Intent i = getIntent();
         final String idString = i.getStringExtra(ID);
-        if(i.getStringExtra(PROJECT_NAME)!=null){
-            String titleString = i.getStringExtra(PROJECT_NAME);
-            String contextString = i.getStringExtra(DUE_DATE);
+        if(i.getStringExtra(PROJECT_NAME)!=null && i.getStringExtra(DUE_DATE)!=null){
+            String titleString = i.getStringExtra(COURSE_TITLE);
+            String dueString = i.getStringExtra(DUE_DATE);
+            String courseNumString = i.getStringExtra(COURSE_NUM);
+            String instructorString = i.getStringExtra(INSTRUCTOR_NAME);
+            String projectNameString = i.getStringExtra(PROJECT_NAME);
+            String contextString = i.getStringExtra(DESCRIPTION);
+            String statusString = i.getStringExtra(STATUS);;
+
             title.setText(titleString);
+            due.setText(dueString);
+            course_num.setText(courseNumString);
+            instructor_name.setText(instructorString);
+            project_name.setText(projectNameString);
             description.setText(contextString);
+
+
 
 //            if (i.getStringExtra(PATH).equals("null")) {
 //                img.setVisibility(View.GONE);
@@ -111,7 +123,7 @@ public class NewProjectActivity extends AppCompatActivity {
 //                context.setMaxLines(CONTENT_MINLINE);
 //            }
         }
-        due.setText(getTime());
+//        due.setText(getTime());
 
         // Back button
         back=(Button)findViewById(R.id.button6);
