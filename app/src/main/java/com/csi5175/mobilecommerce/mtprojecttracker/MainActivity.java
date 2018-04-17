@@ -2,11 +2,14 @@ package com.csi5175.mobilecommerce.mtprojecttracker;
 
 import android.annotation.SuppressLint;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,7 +73,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private Cursor cursor_todo;
     private Cursor cursor_completed;
 
-    private static final String PROJECT_DATA_LOCAL_PATH = "/sdcard/DCIM/";
+    private static final String PROJECT_DATA_LOCAL_PATH = "/sdcard/DCIM/AWS-S3";
 
     private int currentTab;
 
@@ -213,6 +216,94 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 syncAWS();
             }
         });
+
+        listView1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
+                final CharSequence[] optionList = {"Delete"};
+
+                // Show option menu
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setTitle("Options");
+                builder.setItems(optionList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        // Delete option
+                        if(optionList[i].equals("Delete")) {
+                            cursor_todo.moveToPosition(position);
+                            String id = cursor_todo.getString(0);
+                            if(!id.equals("")) {
+                                sqlDB.delete(TABLE_NAME, ID + "=" + id, null);
+                            }
+                            Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        });
+
+        listView2.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
+                final CharSequence[] optionList = {"Delete"};
+
+                // Show option menu
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setTitle("Options");
+                builder.setItems(optionList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        // Delete option
+                        if(optionList[i].equals("Delete")) {
+                            cursor_completed.moveToPosition(position);
+                            String id = cursor_completed.getString(0);
+                            if(!id.equals("")) {
+                                sqlDB.delete(TABLE_NAME, ID + "=" + id, null);
+                            }
+                            Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        });
+
+        listView3.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
+                final CharSequence[] optionList = {"Delete"};
+
+                // Show option menu
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                builder.setTitle("Options");
+                builder.setItems(optionList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        // Delete option
+                        if(optionList[i].equals("Delete")) {
+                            cursor_all.moveToPosition(position);
+                            String id = cursor_all.getString(0);
+                            if(!id.equals("")) {
+                                sqlDB.delete(TABLE_NAME, ID + "=" + id, null);
+                            }
+                            Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.show();
+                return true;
+            }
+        });
+
     }
 
     private void syncAWS() {
@@ -251,6 +342,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
     private void serializeDataWithTransferUtility() {
         File dir = new File(PROJECT_DATA_LOCAL_PATH);
+        dir.mkdir();
         if(!dir.exists() || !dir.isDirectory()) {
             Toast.makeText(getApplicationContext(),"Failed to synchronize projects : invalid storage path",Toast.LENGTH_SHORT).show();
             return;
@@ -264,6 +356,14 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                         .build();
 
         ArrayList<HashMap<String, String>> awsList = new ArrayList<HashMap<String, String>>();
+
+
+        // Clear previous project data
+        for(File oldFile : dir.listFiles()) {
+            if(oldFile.isFile()) {
+                oldFile.delete();
+            }
+        }
 
         // Retrieve all project data
         if(cursor_all.moveToFirst()) {
@@ -290,7 +390,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             try {
                 projectTxt.createNewFile();
 
-                BufferedWriter bfw = new BufferedWriter(new FileWriter(projectTxt, true));
+                BufferedWriter bfw = new BufferedWriter(new FileWriter(projectTxt, false));
                 bfw.write(dataItem.toString());
                 bfw.newLine();
                 bfw.flush();
