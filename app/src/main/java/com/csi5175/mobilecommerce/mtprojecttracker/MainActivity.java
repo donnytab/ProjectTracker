@@ -57,6 +57,8 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     public static final String STATUS = "status";
     private SQLiteDatabase sqlDB;
     private Cursor cursor_all;
+    private Cursor cursor_todo;
+    private Cursor cursor_completed;
 
     private int currentTab;
 
@@ -72,6 +74,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         // Create or open database
         sqlDB = openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY,null);
 
+//        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+//        sqlDB.delete(TABLE_NAME, null, null);
+
         // Create table
         try {
             sqlDB.execSQL("CREATE TABLE " + TABLE_NAME + " ("
@@ -81,11 +86,14 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                     + INSTRUCTOR_NAME + " TEXT NOT NULL,"
                     + PROJECT_NAME + " TEXT NOT NULL,"
                     + DESCRIPTION + " TEXT NOT NULL,"
-                    + DUE_DATE + " TEXT NOT NULL)");
+                    + DUE_DATE + " TEXT NOT NULL,"
+                    + STATUS + " TEXT NOT NULL);");
         }catch(Exception e){
         }
 
         cursor_all = sqlDB.query(TABLE_NAME, null, null, null, null, null, null);
+        cursor_todo = sqlDB.query(TABLE_NAME, null, STATUS+"=?", new String[]{"todo"}, null, null, null);
+        cursor_completed = sqlDB.query(TABLE_NAME, null, STATUS+"=?", new String[]{"completed"}, null, null, null);
 
 
         currentTab = 0;
@@ -108,9 +116,11 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         List<String> list3 = new ArrayList<String>();
         list3.add("Jade 1");
 
-        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
-        listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
+//        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
+//        listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
 //        listView3.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3));
+        listView1.setAdapter(RefreshAdapter(cursor_todo));
+        listView2.setAdapter(RefreshAdapter(cursor_completed));
         listView3.setAdapter(RefreshAdapter(cursor_all));
 
         tabHost.addTab(tabHost.newTabSpec(TODO_SPEC).setIndicator(LIST1_TAG).setContent(R.id.list1));
