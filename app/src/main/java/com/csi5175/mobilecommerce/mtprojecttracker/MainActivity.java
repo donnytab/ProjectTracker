@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityHandler;
@@ -31,9 +32,12 @@ import com.amazonaws.mobileconnectors.s3.transferutility.*;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.util.LengthCheckInputStream;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends TabActivity implements TabHost.OnTabChangeListener {
@@ -42,6 +46,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private ListView listView2;
     private ListView listView3;
     private FloatingActionButton newBtn;
+    private FloatingActionButton syncBtn;
 
     private static final String TODO_SPEC = "todoSpec";
     private static final String COMPLETED_SPEC = "completedSpec";
@@ -64,6 +69,8 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private Cursor cursor_all;
     private Cursor cursor_todo;
     private Cursor cursor_completed;
+
+    private static final String PROJECT_DATA_LOCAL_PATH = "/sdcard/DCIM/";
 
     private int currentTab;
 
@@ -107,6 +114,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView2 = (ListView)findViewById(R.id.list2);
         listView3 = (ListView)findViewById(R.id.list3);
         newBtn = (FloatingActionButton)findViewById(R.id.new_button);
+        syncBtn = (FloatingActionButton)findViewById(R.id.sync_button);
         tabHost = getTabHost();
         tabHost.setOnTabChangedListener(this);
 
@@ -174,7 +182,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 i.putExtra(PROJECT_NAME, cursor_all.getString(4));
                 i.putExtra(DESCRIPTION, cursor_all.getString(5));
                 i.putExtra(DUE_DATE, cursor_all.getString(6));
-                i.putExtra(STATUS, cursor_all.getString(6));
+                i.putExtra(STATUS, cursor_all.getString(7));
                 startActivity(i);
             }
         });
@@ -185,6 +193,29 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         tabHost.setCurrentTab(currentTab);
 
+
+//        uploadWithTransferUtility();
+
+        // To NewProject activity
+        newBtn.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),NewProjectActivity.class);
+                startActivity(i);
+            }
+        });
+
+        // Sync listener
+        syncBtn.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sync project files to Amazon S3
+                syncAWS();
+            }
+        });
+    }
+
+    private void syncAWS() {
         AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
             @Override
             public void onComplete(AWSStartupResult awsStartupResult) {
@@ -213,21 +244,17 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             }
         }).execute();
 
-
-        uploadWithTransferUtility();
-
-        // To NewProject activity
-        newBtn.setOnClickListener(new FloatingActionButton.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),NewProjectActivity.class);
-                startActivity(i);
-            }
-        });
+//        uploadWithTransferUtility();
+        serializeDataWithTransferUtility();
     }
 
 
-    private void uploadWithTransferUtility() {
+    private void serializeDataWithTransferUtility() {
+        File dir = new File(PROJECT_DATA_LOCAL_PATH);
+        if(!dir.exists() || !dir.isDirectory()) {
+            Toast.makeText(getApplicationContext(),"Failed to synchronize projects : invalid storage path",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         TransferUtility transferUtility =
                 TransferUtility.builder()
@@ -236,53 +263,83 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                         .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
                         .build();
 
-        File file = new File("/sdcard/DCIM/","s3Key.txt");
-        try {
-//            file.mkdir();
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        ArrayList<HashMap<String, String>> awsList = new ArrayList<HashMap<String, String>>();
+
+        // Retrieve all project data
+        if(cursor_all.moveToFirst()) {
+            do {
+                HashMap<String, String> projectMap = new HashMap<String, String>();
+                projectMap.put(ID, cursor_all.getString(0));
+                projectMap.put(COURSE_TITLE, cursor_all.getString(1));
+                projectMap.put(COURSE_NUM, cursor_all.getString(2));
+                projectMap.put(INSTRUCTOR_NAME, cursor_all.getString(3));
+                projectMap.put(PROJECT_NAME, cursor_all.getString(4));
+                projectMap.put(DESCRIPTION, cursor_all.getString(5));
+                projectMap.put(DUE_DATE, cursor_all.getString(6));
+                projectMap.put(STATUS, cursor_all.getString(7));
+
+                awsList.add(projectMap);
+            } while (cursor_all.moveToNext());
         }
 
-        TransferObserver uploadObserver =
-                transferUtility.upload(
-                        "s3Key.txt", file);
+        for(HashMap<String, String> dataItem : awsList) {
+            String fileName = dataItem.get(ID) + "-" + dataItem.get(COURSE_TITLE).replace(" ", "_") + "-"
+                    + dataItem.get(PROJECT_NAME).replace(" ", "_") + ".txt";
 
-        // Attach a listener to the observer to get state update and progress notifications
-        uploadObserver.setTransferListener(new TransferListener() {
+            File projectTxt = new File(PROJECT_DATA_LOCAL_PATH, fileName);
+            try {
+                projectTxt.createNewFile();
 
-            @Override
-            public void onStateChanged(int id, TransferState state) {
-                if (TransferState.COMPLETED == state) {
-                    // Handle a completed upload.
+                BufferedWriter bfw = new BufferedWriter(new FileWriter(projectTxt, true));
+                bfw.write(dataItem.toString());
+                bfw.newLine();
+                bfw.flush();
+                bfw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            TransferObserver uploadObserver = transferUtility.upload(fileName, projectTxt);
+
+            // Attach a listener to the observer to get state update and progress notifications
+            uploadObserver.setTransferListener(new TransferListener() {
+
+                @Override
+                public void onStateChanged(int id, TransferState state) {
+                    if (TransferState.COMPLETED == state) {
+                        // Handle a completed upload.
+                    }
                 }
+
+                @Override
+                public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                    float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                    int percentDone = (int)percentDonef;
+
+                    Log.d("YourActivity", "ID:" + id + " bytesCurrent: " + bytesCurrent
+                            + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+                }
+
+                @Override
+                public void onError(int id, Exception ex) {
+                    // Handle errors
+                }
+
+            });
+
+
+            // check for the state and progress in the observer.
+            if (TransferState.COMPLETED == uploadObserver.getState()) {
+                // Handle a completed upload.
             }
 
-            @Override
-            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
-                float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
-                int percentDone = (int)percentDonef;
-
-                Log.d("YourActivity", "ID:" + id + " bytesCurrent: " + bytesCurrent
-                        + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
-            }
-
-            @Override
-            public void onError(int id, Exception ex) {
-                // Handle errors
-            }
-
-        });
-
-        // If you prefer to poll for the data, instead of attaching a
-        // listener, check for the state and progress in the observer.
-        if (TransferState.COMPLETED == uploadObserver.getState()) {
-            // Handle a completed upload.
+            Log.d("YourActivity", "Bytes Transferrred: " + uploadObserver.getBytesTransferred());
+            Log.d("YourActivity", "Bytes Total: " + uploadObserver.getBytesTotal());
         }
 
-        Log.d("YourActivity", "Bytes Transferrred: " + uploadObserver.getBytesTransferred());
-        Log.d("YourActivity", "Bytes Total: " + uploadObserver.getBytesTotal());
+        Toast.makeText(getApplicationContext(),"Sync Finished",Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public void onTabChanged(String tabName) {

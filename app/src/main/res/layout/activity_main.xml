@@ -25,6 +25,15 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_upload"
+        android:id="@+id/sync_button"
+        android:layout_gravity="bottom|end"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
+
     <TabHost
         android:id="@android:id/tabhost"
         android:layout_width="match_parent"
