@@ -50,7 +50,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        currentTab = 2;
+        currentTab = 0;
 
         listView1 = (ListView)findViewById(R.id.list1);
         listView2 = (ListView)findViewById(R.id.list2);
@@ -58,7 +58,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         tabHost = getTabHost();
         tabHost.setOnTabChangedListener(this);
 
-
+        /*
         TabSpec tabSpec1 = tabHost.newTabSpec(TODO_SPEC);
         TabSpec tabSpec2 = tabHost.newTabSpec(COMPLETED_SPEC);
         TabSpec tabSpec3 = tabHost.newTabSpec(ALL_SPEC);
@@ -67,6 +67,28 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         tabSpec1.setIndicator(LIST1_TAG);
         tabSpec2.setIndicator(LIST2_TAG);
         tabSpec3.setIndicator(LIST3_TAG);
+
+*/
+        List<String> list1 = new ArrayList<String>();
+        list1.add("MT 1");
+        list1.add("MT 2");
+        list1.add("MT 3");
+
+        List<String> list2 = new ArrayList<String>();
+        list2.add("DONNY 1");
+        list2.add("DONNY 2");
+
+        List<String> list3 = new ArrayList<String>();
+        list3.add("Jade 1");
+
+        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
+        listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
+        listView3.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3));
+
+        tabHost.addTab(tabHost.newTabSpec(TODO_SPEC).setIndicator(LIST1_TAG).setContent(R.id.list1));
+        tabHost.addTab(tabHost.newTabSpec(COMPLETED_SPEC).setIndicator(LIST2_TAG).setContent(R.id.list2));
+        tabHost.addTab(tabHost.newTabSpec(ALL_SPEC).setIndicator(LIST3_TAG).setContent(R.id.list3));
+/*
 
         tabSpec1.setContent(new TabHost.TabContentFactory() {
             @Override
@@ -88,28 +110,16 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 return listView3;
             }
         });
+*/
 
-        List<String> list1 = new ArrayList<String>();
-        list1.add("MT 1");
-        list1.add("MT 2");
-        list1.add("MT 3");
-
-        List<String> list2 = new ArrayList<String>();
-        list2.add("DONNY 1");
-        list2.add("DONNY 2");
-
-        List<String> list3 = new ArrayList<String>();
-        list3.add("Jade 1");
-
-        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
-        listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
-        listView3.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3));
-
+/*
         tabHost.addTab(tabSpec1);
         tabHost.addTab(tabSpec2);
         tabHost.addTab(tabSpec3);
-
+*/
         tabHost.setCurrentTab(currentTab);
+
+
 
 
 
@@ -205,7 +215,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
     @Override
     public void onTabChanged(String tabName) {
-        if(tabName.equals("")) {
+        if(tabName.equals("COMPLETED")) {
 
         } else {
 
