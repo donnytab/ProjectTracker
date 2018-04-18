@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -87,10 +88,12 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private  Cursor cursor_todo_search;
     private  Cursor cursor_completed_search;
     private  Cursor cursor_all_search;
+    private static MediaPlayer player;
 
     private static final String PROJECT_DATA_LOCAL_PATH = "/sdcard/DCIM/AWS-S3";
 
     private int currentTab;
+    private static boolean hasMusic = false;
 
     private AWSCredentialsProvider awsCredentialsProvider;
     private AWSConfiguration awsConfiguration;
@@ -149,6 +152,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         List<String> list3 = new ArrayList<String>();
         list3.add("Jade 1");
+
+        // Play background music
+        startMusicService();
 
         // Show urgent due warning list
         showProjectDueWithinTwoDays();
@@ -588,5 +594,36 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         });
 
         warningListDialog.show();
+    }
+
+    // Play background music
+    private void startMusicService() {
+        if(!hasMusic) {
+            try
+            {
+                player = MediaPlayer.create(this, R.raw.zayn);
+                player.start();
+                Log.e("music", "music starts...");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            hasMusic = true;
+        }
+    }
+
+    // Stop background music
+    private void stopMusicService() {
+        if(hasMusic) {
+            player.release();
+            Log.e("music", "music ends...");
+            hasMusic = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopMusicService();
+        sqlDB.close();
     }
 }
