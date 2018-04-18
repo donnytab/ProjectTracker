@@ -3,6 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorFrame">#e4d0d8</color>
+    <color name="colorSearch">#fd88b0</color>
     <color name="colorBlack">#000000</color>
-    <color name="colorDivider">#B6B6B6</color>
+    <color name="colorSubText">#393939</color>
+    <color name="colorDivider">#000000</color>
 </resources>
