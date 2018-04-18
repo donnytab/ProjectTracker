@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -55,6 +56,7 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
     Button save;
     Button back;
     Button selectTime;
+    CheckBox checkBox;
 
     private static final String DATABASE_NAME = "s3db";
     private static final String TABLE_NAME = "project";
@@ -102,6 +104,7 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
         description=(EditText)findViewById(R.id.editText7);
         save = (Button)findViewById(R.id.button5);
         selectTime = (Button)findViewById(R.id.select_time);
+        checkBox = (CheckBox)findViewById(R.id.checkBox);
 
         // Show note details
         Intent i = getIntent();
@@ -122,6 +125,9 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
             project_name.setText(projectNameString);
             description.setText(contextString);
 
+            if(statusString.equals("completed")) {
+                checkBox.setChecked(true);
+            }
 
 
 //            if (i.getStringExtra(PATH).equals("null")) {
@@ -158,9 +164,13 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
                     String instructorString = instructor_name.getText().toString();
                     String projectNameString = project_name.getText().toString();
                     String contextString = description.getText().toString();
+                    String statusString;
+                    if(checkBox.isChecked()) {
+                        statusString = "completed";
+                    } else {
+                        statusString = "todo";
+                    }
 
-
-                    String statusString = "todo";
 
                     //title text ,time text, context text
                     ContentValues cv = new ContentValues();
