@@ -8,11 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,13 +17,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
-import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -38,11 +32,9 @@ import com.amazonaws.mobile.client.AWSStartupResult;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.s3.transferutility.*;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.util.LengthCheckInputStream;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -107,9 +99,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         // Create or open database
         sqlDB = openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY,null);
 
-//        sqlDB.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-//        sqlDB.delete(TABLE_NAME, null, null);
-
         // Create table
         try {
             sqlDB.execSQL("CREATE TABLE " + TABLE_NAME + " ("
@@ -159,9 +148,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         // Show urgent due warning list
         showProjectDueWithinTwoDays();
 
-//        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
-//        listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
-//        listView3.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list3));
         listView1.setAdapter(RefreshAdapter(cursor_todo));
         listView2.setAdapter(RefreshAdapter(cursor_completed));
         listView3.setAdapter(RefreshAdapter(cursor_all));
@@ -274,20 +260,11 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             @Override
             public void onClick(View v) {
                 String[] aboutArray = {"Shenyong Guan", "sguan044@uottawa.ca", "Wendong Yuan", "wyuan011@uottawa.ca"};
-//                ArrayList<String> aboutList = new ArrayList<>();
-//
-//                aboutList.add("Shenyong Guan");
-//                aboutList.add("sguan044@uottawa.ca");
-//                aboutList.add("\n");
-//                aboutList.add("Wendong Yuan");
-//                aboutList.add("wyuan011@uottawa.ca");
 
                 // Show dialog
                 final AlertDialog.Builder aboutDialog = new AlertDialog.Builder(MainActivity.this);
-//                ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, aboutList);
 
                 aboutDialog.setTitle("ABOUT US");
-//                aboutDialog.setAdapter(adapter, new DialogInterface.OnClickListener() {
                 aboutDialog.setItems(aboutArray, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -314,7 +291,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
                 // Show option menu
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                builder.setTitle("Options");
                 builder.setItems(optionList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -362,7 +338,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
                 // Show option menu
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                builder.setTitle("Options");
                 builder.setItems(optionList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -410,7 +385,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
                 // Show option menu
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                builder.setTitle("Options");
                 builder.setItems(optionList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -482,7 +456,6 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             }
         }).execute();
 
-//        uploadWithTransferUtility();
         serializeDataWithTransferUtility();
     }
 

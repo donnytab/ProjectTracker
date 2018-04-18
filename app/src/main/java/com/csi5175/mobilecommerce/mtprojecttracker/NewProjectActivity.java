@@ -1,50 +1,25 @@
 package com.csi5175.mobilecommerce.mtprojecttracker;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
-import android.support.v4.app.DialogFragment;
 
-
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
-
 
 public class NewProjectActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
     EditText title;
@@ -129,18 +104,7 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
                 checkBox.setChecked(true);
             }
 
-
-//            if (i.getStringExtra(PATH).equals("null")) {
-//                img.setVisibility(View.GONE);
-//                context.setMaxLines(CONTENT_MAXLINE);
-//            } else {
-//                img.setVisibility(View.VISIBLE);
-//                Bitmap bitmap = BitmapFactory.decodeFile(i.getStringExtra(PATH));
-//                img.setImageBitmap(bitmap);
-//                context.setMaxLines(CONTENT_MINLINE);
-//            }
         }
-//        due.setText(getTime());
 
         // Back button
         back=(Button)findViewById(R.id.button6);
@@ -202,8 +166,6 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
         selectTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-//                startActivity(i);
                 DatePickerFragment mDatePicker = new DatePickerFragment();
                 mDatePicker.show(getSupportFragmentManager(), "Select time");
             }
