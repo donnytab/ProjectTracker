@@ -34,10 +34,16 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true" />
 
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TabHost
         android:id="@android:id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/search_view"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
@@ -49,7 +55,9 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" >
+
+            </TabWidget>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"

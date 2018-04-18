@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +22,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -57,6 +59,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private ListView listView3;
     private FloatingActionButton newBtn;
     private FloatingActionButton syncBtn;
+    private SearchView searchView;
 
     private static final String TODO_SPEC = "todoSpec";
     private static final String COMPLETED_SPEC = "completedSpec";
@@ -79,6 +82,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private Cursor cursor_all;
     private Cursor cursor_todo;
     private Cursor cursor_completed;
+    private  Cursor cursor_todo_search;
+    private  Cursor cursor_completed_search;
+    private  Cursor cursor_all_search;
 
     private static final String PROJECT_DATA_LOCAL_PATH = "/sdcard/DCIM/AWS-S3";
 
@@ -125,6 +131,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView3 = (ListView)findViewById(R.id.list3);
         newBtn = (FloatingActionButton)findViewById(R.id.new_button);
         syncBtn = (FloatingActionButton)findViewById(R.id.sync_button);
+        searchView = (SearchView)findViewById(R.id.search_view);
         tabHost = getTabHost();
         tabHost.setOnTabChangedListener(this);
 
@@ -150,6 +157,41 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView2.setAdapter(RefreshAdapter(cursor_completed));
         listView3.setAdapter(RefreshAdapter(cursor_all));
 
+        // Search for course title or project name or description
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!TextUtils.isEmpty(newText)){
+                    // Query based on input text
+                    cursor_todo_search = sqlDB.rawQuery("SELECT * FROM " + TABLE_NAME +" WHERE " + COURSE_TITLE +" LIKE '%" + newText
+                            + "%' OR "+ PROJECT_NAME +" LIKE '%" + newText + "%' OR " + DESCRIPTION + " LIKE '%" + newText + "%' AND " + STATUS + "='todo'", null);
+                    cursor_completed_search = sqlDB.rawQuery("SELECT * FROM " + TABLE_NAME +" WHERE " + COURSE_TITLE +" LIKE '%" + newText
+                            + "%' OR "+ PROJECT_NAME +" LIKE '%" + newText + "%' OR " + DESCRIPTION + " LIKE '%" + newText + "%' AND " + STATUS + "='completed'", null);
+                    cursor_all_search = sqlDB.rawQuery("SELECT * FROM " + TABLE_NAME +" WHERE " + COURSE_TITLE +" LIKE '%" + newText
+                            + "%' OR "+ PROJECT_NAME +" LIKE '%" + newText + "%' OR " + DESCRIPTION + " LIKE '%" + newText + "%' ", null);
+                    listView1.setAdapter(RefreshAdapter(cursor_todo_search));
+                    listView2.setAdapter(RefreshAdapter(cursor_completed_search));
+                    listView3.setAdapter(RefreshAdapter(cursor_all_search));
+                    listView1.invalidateViews();
+                    listView2.invalidateViews();
+                    listView3.invalidateViews();
+                }else{
+                    // List all notes if input text is empty
+                    listView1.setAdapter(RefreshAdapter(cursor_todo));
+                    listView2.setAdapter(RefreshAdapter(cursor_completed));
+                    listView3.setAdapter(RefreshAdapter(cursor_all));
+                    listView1.invalidateViews();
+                    listView2.invalidateViews();
+                    listView3.invalidateViews();
+                }
+                return false;
+            }
+        });
 
         //enter note_add page
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
