@@ -47,7 +47,7 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorSearch"/>
+        android:background="@color/colorFrame"/>
 
     <TabHost
         android:id="@android:id/tabhost"
@@ -72,8 +72,7 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorFrame">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:id="@+id/incompleted"
