@@ -214,7 +214,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 i.putExtra(PROJECT_NAME, cursor_todo.getString(4));
                 i.putExtra(DESCRIPTION, cursor_todo.getString(5));
                 i.putExtra(DUE_DATE, cursor_todo.getString(6));
-                i.putExtra(STATUS, cursor_todo.getString(6));
+                i.putExtra(STATUS, cursor_todo.getString(7));
                 startActivity(i);
             }
         });
@@ -230,7 +230,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 i.putExtra(PROJECT_NAME, cursor_completed.getString(4));
                 i.putExtra(DESCRIPTION, cursor_completed.getString(5));
                 i.putExtra(DUE_DATE, cursor_completed.getString(6));
-                i.putExtra(STATUS, cursor_completed.getString(6));
+                i.putExtra(STATUS, cursor_completed.getString(7));
                 startActivity(i);
             }
         });
@@ -310,7 +310,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView1.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
-                final CharSequence[] optionList = {"Delete"};
+                final CharSequence[] optionList = {"Summary", "Delete"};
 
                 // Show option menu
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -318,6 +318,25 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 builder.setItems(optionList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // summary option
+                        if(optionList[i].equals("Summary")) {
+                            cursor_todo.moveToPosition(position);
+                            String course_title = cursor_todo.getString(1);
+                            String project_name = cursor_todo.getString(4);
+                            String due_date = cursor_todo.getString(6);
+                            String status = cursor_todo.getString(7);
+
+                            String summary = "Course Title : " + course_title + "\n" +
+                                             "Project Name : " + project_name + "\n" +
+                                             "Due Date : " + due_date + "\n" +
+                                             "Status : " + status;
+
+                            // Show dialog
+                            final AlertDialog.Builder warningListDialog = new AlertDialog.Builder(MainActivity.this);
+                            warningListDialog.setTitle("SUMMARY");
+                            warningListDialog.setMessage(summary);
+                            warningListDialog.show();
+                        }
 
                         // Delete option
                         if(optionList[i].equals("Delete")) {
@@ -339,7 +358,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView2.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
-                final CharSequence[] optionList = {"Delete"};
+                final CharSequence[] optionList = {"Summary", "Delete"};
 
                 // Show option menu
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -347,6 +366,25 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 builder.setItems(optionList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // summary option
+                        if(optionList[i].equals("Summary")) {
+                            cursor_completed.moveToPosition(position);
+                            String course_title = cursor_completed.getString(1);
+                            String project_name = cursor_completed.getString(4);
+                            String due_date = cursor_completed.getString(6);
+                            String status = cursor_completed.getString(7);
+
+                            String summary = "Course Title : " + course_title + "\n" +
+                                    "Project Name : " + project_name + "\n" +
+                                    "Due Date : " + due_date + "\n" +
+                                    "Status : " + status;
+
+                            // Show dialog
+                            final AlertDialog.Builder warningListDialog = new AlertDialog.Builder(MainActivity.this);
+                            warningListDialog.setTitle("SUMMARY");
+                            warningListDialog.setMessage(summary);
+                            warningListDialog.show();
+                        }
 
                         // Delete option
                         if(optionList[i].equals("Delete")) {
@@ -368,7 +406,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView3.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
-                final CharSequence[] optionList = {"Delete"};
+                final CharSequence[] optionList = {"Summary", "Delete"};
 
                 // Show option menu
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -376,6 +414,25 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 builder.setItems(optionList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // summary option
+                        if(optionList[i].equals("Summary")) {
+                            cursor_all.moveToPosition(position);
+                            String course_title = cursor_all.getString(1);
+                            String project_name = cursor_all.getString(4);
+                            String due_date = cursor_all.getString(6);
+                            String status = cursor_all.getString(7);
+
+                            String summary = "Course Title : " + course_title + "\n" +
+                                    "Project Name : " + project_name + "\n" +
+                                    "Due Date : " + due_date + "\n" +
+                                    "Status : " + status;
+
+                            // Show dialog
+                            final AlertDialog.Builder warningListDialog = new AlertDialog.Builder(MainActivity.this);
+                            warningListDialog.setTitle("SUMMARY");
+                            warningListDialog.setMessage(summary);
+                            warningListDialog.show();
+                        }
 
                         // Delete option
                         if(optionList[i].equals("Delete")) {
