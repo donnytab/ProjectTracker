@@ -41,6 +41,7 @@ import com.amazonaws.util.LengthCheckInputStream;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -59,6 +60,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     private ListView listView3;
     private FloatingActionButton newBtn;
     private FloatingActionButton syncBtn;
+    private FloatingActionButton aboutBtn;
     private SearchView searchView;
 
     private static final String TODO_SPEC = "todoSpec";
@@ -131,6 +133,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         listView3 = (ListView)findViewById(R.id.list3);
         newBtn = (FloatingActionButton)findViewById(R.id.new_button);
         syncBtn = (FloatingActionButton)findViewById(R.id.sync_button);
+        aboutBtn = (FloatingActionButton)findViewById(R.id.about_button);
         searchView = (SearchView)findViewById(R.id.search_view);
         tabHost = getTabHost();
         tabHost.setOnTabChangedListener(this);
@@ -257,6 +260,35 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(),NewProjectActivity.class);
                 startActivity(i);
+            }
+        });
+
+        // About button listener
+        aboutBtn.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] aboutArray = {"Shenyong Guan", "sguan044@uottawa.ca", "Wendong Yuan", "wyuan011@uottawa.ca"};
+//                ArrayList<String> aboutList = new ArrayList<>();
+//
+//                aboutList.add("Shenyong Guan");
+//                aboutList.add("sguan044@uottawa.ca");
+//                aboutList.add("\n");
+//                aboutList.add("Wendong Yuan");
+//                aboutList.add("wyuan011@uottawa.ca");
+
+                // Show dialog
+                final AlertDialog.Builder aboutDialog = new AlertDialog.Builder(MainActivity.this);
+//                ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, aboutList);
+
+                aboutDialog.setTitle("ABOUT US");
+//                aboutDialog.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                aboutDialog.setItems(aboutArray, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+
+                aboutDialog.show();
             }
         });
 
