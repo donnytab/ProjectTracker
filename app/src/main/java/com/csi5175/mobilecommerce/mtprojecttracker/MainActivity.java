@@ -2,6 +2,7 @@ package com.csi5175.mobilecommerce.mtprojecttracker;
 
 import android.annotation.SuppressLint;
 import android.app.TabActivity;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TabHost;
@@ -39,7 +41,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -132,6 +139,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         List<String> list3 = new ArrayList<String>();
         list3.add("Jade 1");
+
+        // Show urgent due warning list
+        showProjectDueWithinTwoDays();
 
 //        listView1.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list1));
 //        listView2.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, list2));
@@ -458,5 +468,51 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 new int[]{R.id.project_name, R.id.project_due},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         return  listAdapter;
+    }
+
+    private boolean isDueWithinTwoDays(String dueDate) {
+        final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG);
+        try {
+            Calendar calendar = Calendar.getInstance();
+            Date due = dateFormat.parse(dueDate);
+            Date currentDate = calendar.getTime();
+            long diffMillisecond = due.getTime() - currentDate.getTime();
+            long diffDay = diffMillisecond/(1000 * 60 * 60 * 24);
+
+            return (diffDay <= 2) && (diffDay >=0);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void showProjectDueWithinTwoDays() {
+        ArrayList<String> urgentDueList = new ArrayList<>();
+
+        if(cursor_all.moveToFirst()) {
+            do {
+                if(isDueWithinTwoDays(cursor_all.getString(6))) {
+                    String warningListItem = cursor_all.getString(4) + "         " + cursor_all.getString(6);
+
+                    urgentDueList.add(warningListItem);
+                }
+
+            } while (cursor_all.moveToNext());
+        }
+
+        // Show dialog
+        final AlertDialog.Builder warningListDialog = new AlertDialog.Builder(MainActivity.this);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, urgentDueList);
+
+
+        warningListDialog.setTitle("WARNING : DUE WITHIN 2 DAYS");
+        warningListDialog.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+        warningListDialog.show();
     }
 }

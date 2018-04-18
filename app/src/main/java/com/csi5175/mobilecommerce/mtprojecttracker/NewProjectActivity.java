@@ -227,7 +227,7 @@ public class NewProjectActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void setDate(final Calendar calendar) {
-        final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM);
+        final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG);
         ((TextView) findViewById(R.id.new_due)).setText(dateFormat.format(calendar.getTime()));
 
     }
